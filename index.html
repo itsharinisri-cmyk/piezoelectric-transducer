@@ -1,116 +1,139 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piezoelectric Transducer Explorer</title>
-<style>
-:root{--navy:#14243b;--blue:#2266d1;--teal:#0e9f9a;--paper:#f4f7fb;--ink:#1b2b40;--muted:#5c6c80;--line:#dbe4ef;--white:#fff;--gold:#f5b942}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55}
-header{background:linear-gradient(125deg,#14243b,#3653a4);color:white;padding:42px 20px 38px}.wrap{max-width:1050px;margin:auto;padding:0 18px}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;font-weight:800;color:#9be8df}h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.08;margin:.55rem 0 1rem;max-width:760px}header p{max-width:700px;color:#e1ebf8;font-size:1.05rem}.pill{display:inline-block;border:1px solid #a6d8f0;border-radius:99px;padding:5px 11px;font-size:.82rem;margin:5px 5px 0 0}
-main{padding:24px 0 50px}.section{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3vw,28px);margin:18px 0;box-shadow:0 8px 24px #173b6110}h2{margin:0 0 12px;font-size:1.45rem;color:var(--navy)}h3{margin:0 0 8px;color:var(--navy)}p{margin:.45rem 0 .8rem}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.metric{background:#edf5ff;border-radius:14px;padding:16px}.metric strong{display:block;font-size:1.7rem;color:var(--blue)}button{border:0;border-radius:10px;background:var(--blue);color:white;font-weight:700;padding:11px 16px;cursor:pointer}button:hover{filter:brightness(1.08)}input[type=range]{width:100%;accent-color:var(--blue)}label{font-weight:700;display:block;margin:12px 0 5px}.visual,.circuit{background:#f8fbff;border:1px solid var(--line);border-radius:14px;padding:14px}svg{width:100%;height:auto;display:block}.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.step{background:#f5f8fc;border-radius:12px;padding:14px}.num{width:30px;height:30px;display:grid;place-items:center;background:#dbeafe;color:#1d4ed8;border-radius:50%;font-weight:800;margin-bottom:8px}.formula{background:#14243b;color:white;border-radius:14px;padding:18px;text-align:center;font-size:1.35rem;font-weight:750}.answer{display:none;margin-top:10px;padding:12px;border-radius:10px;background:#e9f8f1;color:#145b3c}.answer.show{display:block}.badge{display:inline-block;border-radius:8px;padding:4px 8px;background:#e4f8f5;color:#086c67;font-weight:700;font-size:.82rem}
-@media(max-width:700px){.grid,.steps{grid-template-columns:1fr}.section{border-radius:14px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piezoelectric Transducer AR Lab</title>
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      color: #edf5ff;
+      background: #101827;
+      text-align: center;
+    }
+    main {
+      max-width: 850px;
+      margin: auto;
+    }
+    .panel {
+      margin: 20px auto;
+      padding: 22px;
+      border: 1px solid #34445d;
+      border-radius: 16px;
+      background: #19263a;
+    }
+    model-viewer {
+      width: 100%;
+      height: 380px;
+      background: #23344b;
+      border-radius: 12px;
+    }
+    button, .button {
+      display: inline-block;
+      margin: 12px 5px;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 10px;
+      background: #55d6be;
+      color: #08221f;
+      font-size: 16px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    p { line-height: 1.6; }
+    #status { color: #b9c9df; font-size: 14px; }
+  </style>
 </head>
 <body>
-<header><div class="wrap">
-<div class="eyebrow">Sensors & Instrumentation • Interactive mini lesson</div>
-<h1>Piezoelectric Transducer</h1>
-<p>Explore how mechanical force or pressure can generate electrical charge in a piezoelectric material.</p>
-<span class="pill">Interactive pressure control</span><span class="pill">Circuit diagram</span><span class="pill">Quick quiz</span>
-</div></header>
-<main class="wrap">
-<section class="section">
-<h2>1. Apply pressure to the crystal</h2>
-<p class="muted">Move the slider to simulate increasing or decreasing force. The voltage meter is illustrative and is not a real sensor measurement.</p>
-<div class="grid">
-<div class="visual">
-<svg viewBox="0 0 440 260" role="img" aria-label="Piezoelectric crystal being compressed between two plates">
-<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#d97706"/></marker></defs>
-<rect x="115" y="68" width="210" height="24" rx="4" fill="#64748b"/><rect id="crystal" x="135" y="96" width="170" height="90" rx="5" fill="#8edbd3" stroke="#138a83" stroke-width="2"/><rect x="115" id="bottomPlate" y="190" width="210" height="24" rx="4" fill="#64748b"/>
-<g id="plusSigns" fill="#0f766e" font-size="23" font-weight="800"><text x="155" y="132">+</text><text x="205" y="132">+</text><text x="255" y="132">+</text></g>
-<g id="minusSigns" fill="#b45309" font-size="23" font-weight="800"><text x="155" y="169">−</text><text x="205" y="169">−</text><text x="255" y="169">−</text></g>
-<line x1="220" y1="20" x2="220" y2="58" stroke="#d97706" stroke-width="4" marker-end="url(#arr)"/><text x="235" y="39" font-size="13" fill="#92400e" font-weight="700">Force</text>
-<line x1="220" y1="239" x2="220" y2="219" stroke="#d97706" stroke-width="4" marker-end="url(#arr)"/>
-<text x="220" y="254" text-anchor="middle" font-size="12" fill="#5c6c80">Piezoelectric crystal between electrodes</text>
-</svg>
-</div>
-<div>
-<div class="metric"><span class="muted">Simulated output voltage</span><strong id="voltage">0.0 V</strong><span class="badge" id="forceState">No applied force</span></div>
-<label for="force">Applied force: <span id="forceText">0</span>%</label>
-<input id="force" type="range" min="0" max="100" value="0" step="5">
-<p class="muted">In a real piezoelectric sensor, the output depends on the material, force, geometry, and measurement circuit.</p>
-<div class="formula">Mechanical stress → Electrical charge</div>
-</div>
-</div>
-</section>
-<section class="section">
-<h2>2. Working principle</h2>
-<div class="steps">
-<div class="step"><div class="num">1</div><h3>Apply force</h3><p>Pressure, vibration, or impact stresses a piezoelectric material such as quartz or a piezoceramic.</p></div>
-<div class="step"><div class="num">2</div><h3>Charge develops</h3><p>The material develops electrical charge on its surfaces due to the direct piezoelectric effect.</p></div>
-<div class="step"><div class="num">3</div><h3>Measure output</h3><p>A suitable high-input-impedance circuit or charge amplifier measures the signal.</p></div>
-</div>
-<p><strong>Important:</strong> Piezoelectric sensors are especially useful for dynamic measurements such as vibration, impact, and changing pressure. They are generally not ideal for measuring perfectly static force over long periods because charge can leak away.</p>
-</section>
-<section class="section">
-<h2>3. Simplified circuit diagram</h2>
-<p class="muted">A common measurement arrangement uses a piezoelectric element connected to a charge amplifier, followed by an output display or data-acquisition system.</p>
-<div class="circuit">
-<svg viewBox="0 0 760 250" role="img" aria-label="Piezoelectric sensor to charge amplifier to output display block diagram">
-<defs><marker id="ca" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2266d1"/></marker></defs>
-<rect x="18" y="64" width="155" height="94" rx="12" fill="#e4f8f5" stroke="#0e9f9a" stroke-width="2"/>
-<text x="95" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">Piezoelectric</text><text x="95" y="111" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">element</text><text x="95" y="135" text-anchor="middle" font-size="12" fill="#334155">Charge source</text>
-<line x1="173" y1="111" x2="220" y2="111" stroke="#2266d1" stroke-width="2" marker-end="url(#ca)"/>
-<rect x="228" y="64" width="175" height="94" rx="12" fill="#e8f1ff" stroke="#2266d1" stroke-width="2"/>
-<text x="315" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">Charge amplifier</text><text x="315" y="114" text-anchor="middle" font-size="12" fill="#334155">High input impedance</text><text x="315" y="135" text-anchor="middle" font-size="12" fill="#334155">Charge → voltage</text>
-<line x1="403" y1="111" x2="450" y2="111" stroke="#2266d1" stroke-width="2" marker-end="url(#ca)"/>
-<rect x="458" y="64" width="135" height="94" rx="12" fill="#fff3d9" stroke="#d89a20" stroke-width="2"/>
-<text x="525" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">Filter /</text><text x="525" y="116" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">conditioner</text><text x="525" y="138" text-anchor="middle" font-size="12" fill="#334155">Optional</text>
-<line x1="593" y1="111" x2="628" y2="111" stroke="#2266d1" stroke-width="2" marker-end="url(#ca)"/>
-<rect x="635" y="64" width="108" height="94" rx="12" fill="#f0eaff" stroke="#7856c9" stroke-width="2"/>
-<text x="689" y="99" text-anchor="middle" font-size="14" font-weight="700" fill="#14243b">Output</text><text x="689" y="121" text-anchor="middle" font-size="12" fill="#334155">Display / DAQ</text>
-<text x="380" y="198" text-anchor="middle" font-size="13" fill="#5c6c80">Mechanical stress → electrical charge → conditioned voltage signal</text>
-<text x="380" y="222" text-anchor="middle" font-size="12" fill="#5c6c80">Conceptual block diagram, not a component-level wiring schematic</text>
-</svg>
-</div>
-</section>
-<section class="section">
-<h2>4. Applications</h2>
-<div class="grid">
-<div><h3>Vibration sensing</h3><p class="muted">Monitoring machinery and rotating equipment.</p></div>
-<div><h3>Impact detection</h3><p class="muted">Detecting knocks, impacts, or sudden force changes.</p></div>
-<div><h3>Dynamic pressure</h3><p class="muted">Measuring rapidly changing pressure.</p></div>
-<div><h3>Ultrasound</h3><p class="muted">Converting electrical energy to mechanical waves and back in suitable piezoelectric devices.</p></div>
-</div>
-</section>
-<section class="section">
-<h2>5. Quick quiz</h2>
-<p><strong>What does a piezoelectric material produce when mechanical stress is applied?</strong></p>
-<div style="display:flex;gap:10px;flex-wrap:wrap"><button onclick="quiz(false)">Only light</button><button onclick="quiz(true)">Electrical charge</button><button onclick="quiz(false)">Magnetic poles only</button></div>
-<div id="answer" class="answer" role="status"></div>
-</section>
-<section class="section">
-<h2>6. About AR</h2>
-<p>This page is ready for interactive learning. To launch a real augmented-reality model, it still needs a compatible 3D model file (GLB/USDZ) and AR viewer integration. This page does not claim AR is enabled yet.</p>
-</section>
+<main>
+  <h1>Piezoelectric Transducer</h1>
+  <p>Explore how mechanical pressure and vibration generate electrical charge.</p>
+
+  <section class="panel">
+    <h2>Interactive 3D Model</h2>
+
+    <model-viewer id="model"
+      src="./piezoelectric-sensor.glb"
+      alt="Piezoelectric transducer 3D model"
+      camera-controls
+      auto-rotate
+      ar
+      ar-modes="scene-viewer webxr"
+      ar-scale="auto"
+      shadow-intensity="1">
+    </model-viewer>
+
+    <button id="arButton" type="button">View in AR</button>
+    <button id="resetButton" type="button">Reset Model</button>
+
+    <p id="status" role="status">
+      Rotate the model, or tap View in AR on a compatible phone.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Working Principle</h2>
+    <p><b>1. Mechanical input:</b> Force or vibration deforms the piezoelectric material.</p>
+    <p><b>2. Charge generation:</b> The material develops electrical charge.</p>
+    <p><b>3. Electrical output:</b> Electrodes collect the charge for measurement.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Applications</h2>
+    <p>Vibration sensors, impact detection, pressure measurement,
+    ultrasonic devices and piezoelectric pickups.</p>
+    <h2>Measurement Circuit</h2>
+    <p>A high-input-impedance amplifier or charge amplifier can condition
+    the sensor signal before it is measured using an oscilloscope or ADC.</p>
+  </section>
 </main>
-<footer>Piezoelectric Transducer • Interactive learning page • Sensors & Instrumentation</footer>
+
 <script>
-const slider=document.getElementById('force');
-function update(){
- const f=Number(slider.value), compression=f*.22;
- document.getElementById('forceText').textContent=f;
- document.getElementById('voltage').textContent=(f*.048).toFixed(2)+' V';
- document.getElementById('forceState').textContent=f===0?'No applied force':f<35?'Light force':f<70?'Moderate force':'High force';
- const topY=96+compression/2, h=90-compression;
- const crystal=document.getElementById('crystal');crystal.setAttribute('y',topY);crystal.setAttribute('height',h);
- document.getElementById('bottomPlate').setAttribute('y',topY+h+4);
- document.querySelectorAll('#plusSigns text').forEach(t=>t.setAttribute('y',topY+h*.42));
- document.querySelectorAll('#minusSigns text').forEach(t=>t.setAttribute('y',topY+h*.78));
-}
-slider.addEventListener('input',update);update();
-function quiz(correct){const a=document.getElementById('answer');a.classList.add('show');a.textContent=correct?'Correct! Mechanical stress causes charge to develop on the material surfaces.':'Try again. The direct piezoelectric effect converts mechanical stress into electrical charge.'}
+  const model = document.getElementById("model");
+  const status = document.getElementById("status");
+
+  document.getElementById("arButton").addEventListener("click", async () => {
+    if (!model.loaded) {
+      status.textContent =
+        "The 3D model is not loaded. Check the GLB file and filename.";
+      return;
+    }
+
+    if (!model.canActivateAR) {
+      status.textContent =
+        "AR is not supported here. Try Chrome on a compatible Android phone.";
+      return;
+    }
+
+    try {
+      await model.activateAR();
+      status.textContent = "Opening AR. Follow the prompts on your phone.";
+    } catch (error) {
+      status.textContent =
+        "AR could not launch. Check device compatibility and try again.";
+    }
+  });
+
+  document.getElementById("resetButton").addEventListener("click", () => {
+    model.cameraOrbit = "0deg 75deg 105%";
+    model.cameraTarget = "auto auto auto";
+  });
+
+  model.addEventListener("load", () => {
+    status.textContent = "Model loaded. Tap View in AR to try augmented reality.";
+  });
+
+  model.addEventListener("error", () => {
+    status.textContent =
+      "Model failed to load. Check that piezoelectric-sensor.glb exists in the repository.";
+  });
 </script>
 </body>
 </html>
